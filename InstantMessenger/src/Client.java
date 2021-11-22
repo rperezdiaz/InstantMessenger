@@ -12,24 +12,26 @@ public class Client {
 	public static void main(String[] args) throws IOException {
 
 		Socket s = new Socket(SERVER_IP, SERVER_PORT);
+		MessageHandler serverConn = new MessageHandler(s);
 		BufferedReader kb = new BufferedReader(new InputStreamReader(System.in));
-		BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		PrintWriter out = new PrintWriter(s.getOutputStream(), true);
 
 		System.out.print("Enter a nickname: ");
 		String nickname = kb.readLine();
+		out.println(nickname + " entered the chatroom!");
+		
+		new Thread(serverConn).start(); // start message handler on client side
 		
 		while (true) {
-			System.out.print("> ");
 			String str = kb.readLine();
-			
-			out.println(str); // send to server
-			
-			if (str.equals("quit")) 
+			if (!str.equals("/quit"))
+				out.println(nickname + ": "+ str); // send to server
+			else {
+				out.println(nickname +" exited the chatroom.");
+				out.println(str);
 				break; //exit loop
+			}
 			
-			String serverResponse = in.readLine(); // receive from server
-			System.out.println(serverResponse);
 		}
 		
 		s.close();

@@ -29,7 +29,6 @@ public class ClientHandler implements Runnable{
 				else {
 					outToAll(request);
 				}
-
 			}
 		}
 		catch (IOException e){

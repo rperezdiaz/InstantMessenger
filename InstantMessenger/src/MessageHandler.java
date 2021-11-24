@@ -7,13 +7,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
+import javax.swing.JTextArea;
+
 public class MessageHandler implements Runnable {
 
 	private Socket server;
 	private BufferedReader in;
+	private JTextArea tArea;
 
-	MessageHandler(Socket s) throws IOException {
+	MessageHandler(Socket s, JTextArea t) throws IOException {
 		server = s;
+		tArea = t;
 		in = new BufferedReader(new InputStreamReader(server.getInputStream()));
 	}
 
@@ -21,16 +25,25 @@ public class MessageHandler implements Runnable {
 	public void run() {
 
 		try {
+			String serverResponse = null;
 			while (true) {
-				String serverResponse = null;
-				serverResponse = in.readLine(); // receive from server
+				serverResponse = in.readLine(); // receive message from server
 				if (serverResponse == null)
 					break;
-				System.out.println(serverResponse);
-
+				//Write message to textArea
+				tArea.append(serverResponse+"\n");
+				//position textArea to the bottom of the screen
+				tArea.setCaretPosition(tArea.getDocument().getLength()); 
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Client closed.");
+		}finally {
+			try {
+				in.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}

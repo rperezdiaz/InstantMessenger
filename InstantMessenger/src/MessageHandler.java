@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 
 import javax.swing.JTextPane;
+import javax.swing.text.BadLocationException;
 
 public class MessageHandler implements Runnable {
 
@@ -31,14 +32,16 @@ public class MessageHandler implements Runnable {
 				if (serverResponse == "null")
 					break;
 				
-				
-				//Write message to textArea
-				t.setText(t.getText() + serverResponse+"\n");
+				//Write message to document
+				t.getStyledDocument().insertString(t.getStyledDocument().getLength(), serverResponse +"\n", null);
 				//position textArea to the bottom of the screen
 				t.setCaretPosition(t.getDocument().getLength()); 
 			}
 		} catch (IOException e) {
-			System.out.println("Error in MessageHandler.java");
+			System.err.println("Error in MessageHandler.java");
+			e.printStackTrace();
+		} catch (BadLocationException e) {
+			System.err.println("Error in MessageHandler.java");
 			e.printStackTrace();
 		}finally {
 			try {
@@ -49,7 +52,6 @@ public class MessageHandler implements Runnable {
 			}
 			System.out.println("Client closed.");
 		}
-
 	}
 
 }

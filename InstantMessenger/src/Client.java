@@ -1,11 +1,9 @@
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -13,8 +11,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
 //import javax.swing.text.StyledDocument;
 
 import java.io.InputStreamReader;
@@ -26,10 +22,9 @@ public class Client {
 	private static final int SERVER_PORT = 9090;
 	
 	//private static Color clr;
-	
+	private static JPanel panel;
 	private static JTextPane tPane;
 	private static JTextField tField;
-	private static JPanel panel;
 	
 	static void clientGUI() {
 		JFrame frame = new JFrame();
@@ -48,12 +43,11 @@ public class Client {
 		tPane = new JTextPane();
 		tPane.setEditable(false);
 		tPane.setPreferredSize(new Dimension(460,415));
-		//StyledDocument doc = tPane.getStyledDocument();
 		
 		JScrollPane scrollPane = new JScrollPane( tPane );
 		scrollPane.setViewportView(tPane);
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		
+		scrollPane.setPreferredSize(tPane.getPreferredSize());   
 		panel.add(scrollPane, BorderLayout.PAGE_START);
 		
 		frame.add(tField);

@@ -7,17 +7,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 
 public class MessageHandler implements Runnable {
 
 	private Socket server;
 	private BufferedReader in;
-	private JTextArea tArea;
+	private JTextPane t;
 
-	MessageHandler(Socket s, JTextArea t) throws IOException {
+	MessageHandler(Socket s, JTextPane t) throws IOException {
 		server = s;
-		tArea = t;
+		this.t = t;
 		in = new BufferedReader(new InputStreamReader(server.getInputStream()));
 	}
 
@@ -25,18 +25,21 @@ public class MessageHandler implements Runnable {
 	public void run() {
 
 		try {
-			String serverResponse = null;
-			while (true) {
+			String serverResponse;
+			while (!server.isClosed()) {
 				serverResponse = in.readLine(); // receive message from server
-				if (serverResponse == null)
+				if (serverResponse == "null")
 					break;
+				
+				
 				//Write message to textArea
-				tArea.append(serverResponse+"\n");
+				t.setText(t.getText() + serverResponse+"\n");
 				//position textArea to the bottom of the screen
-				tArea.setCaretPosition(tArea.getDocument().getLength()); 
+				t.setCaretPosition(t.getDocument().getLength()); 
 			}
 		} catch (IOException e) {
-			System.out.println("Client closed.");
+			System.out.println("Error in MessageHandler.java");
+			e.printStackTrace();
 		}finally {
 			try {
 				in.close();
@@ -44,6 +47,7 @@ public class MessageHandler implements Runnable {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			System.out.println("Client closed.");
 		}
 
 	}

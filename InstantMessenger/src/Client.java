@@ -1,5 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,8 +11,11 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+//import javax.swing.text.StyledDocument;
 
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -23,7 +27,7 @@ public class Client {
 	
 	//private static Color clr;
 	
-	private static JTextArea tArea;
+	private static JTextPane tPane;
 	private static JTextField tField;
 	private static JPanel panel;
 	
@@ -33,6 +37,7 @@ public class Client {
 		frame.setSize(500,500);
 		frame.setResizable(false);
 		
+		
 		tField = new JTextField();
 		// arguments:    x    y  width height
 		tField.setBounds(10, 425 , 470, 35);
@@ -40,12 +45,13 @@ public class Client {
 		panel = new JPanel();
 		panel.setLayout(new FlowLayout(FlowLayout.LEADING));
 		
-		tArea = new JTextArea(25, 41);
-		tArea.setBackground(Color.WHITE);
-		tArea.setEditable(false);
+		tPane = new JTextPane();
+		tPane.setEditable(false);
+		tPane.setPreferredSize(new Dimension(460,415));
+		//StyledDocument doc = tPane.getStyledDocument();
 		
-		JScrollPane scrollPane = new JScrollPane( tArea );
-		scrollPane.setViewportView(tArea);
+		JScrollPane scrollPane = new JScrollPane( tPane );
+		scrollPane.setViewportView(tPane);
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		
 		panel.add(scrollPane, BorderLayout.PAGE_START);
@@ -55,16 +61,6 @@ public class Client {
 		frame.setVisible(true);
 		
 	}
-	
-	static Color getRandomColor() {
-		Random rand = new Random();
-		// Java 'Color' class takes 3 floats, from 0 to 1.
-		float r = rand.nextFloat();
-		float g = rand.nextFloat();
-		float b = rand.nextFloat();
-		Color randomColor = new Color(r, g, b);
-		return randomColor;
-	}
 
 	public static void main(String[] args) throws IOException {
 		String username = JOptionPane.showInputDialog("Enter a Username:");
@@ -72,7 +68,7 @@ public class Client {
 		clientGUI();
 		
 		Socket s = new Socket(SERVER_IP, SERVER_PORT);
-		MessageHandler serverConn = new MessageHandler(s, tArea);
+		MessageHandler serverConn = new MessageHandler(s, tPane);
 		BufferedReader kb = new BufferedReader(new InputStreamReader(System.in));
 		PrintWriter out = new PrintWriter(s.getOutputStream(), true);
 

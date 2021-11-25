@@ -14,17 +14,17 @@ public class Server {
 	public static void main(String[] args) throws IOException {
 		ServerSocket listener = new ServerSocket(PORT);
 		clients = new ArrayList<>();
-		
+
 		while (true) {
 			System.out.println("[SERVER] Waiting for client connection...");
 
-			Socket clientConn = listener.accept(); // process waits for connection to port 9090
+			Socket clientConn = listener.accept(); // wait for connection to port 9090
 			System.out.println("[SERVER] A client connected to server.");
-			
-			ClientHandler clientThread = new ClientHandler(clientConn, clients); //adds clients to
-			clients.add(clientThread);
 
-			threadPool.execute(clientThread);
+			ClientHandler clientThread = new ClientHandler(clientConn, clients); // create new ClientHandler
+			clients.add(clientThread); // adds clients to
+
+			threadPool.execute(clientThread); // Start Client Threads
 		}
 
 	}

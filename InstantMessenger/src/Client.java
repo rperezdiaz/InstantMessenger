@@ -1,9 +1,12 @@
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -21,17 +24,19 @@ public class Client {
 	private static final String SERVER_IP = "127.0.0.1";
 	private static final int SERVER_PORT = 9090;
 	
-	//private static Color clr;
 	private static JPanel panel;
 	private static JTextPane tPane;
 	private static JTextField tField;
 	
-	static void clientGUI() {
+	private static ArrayList<Color> colors;
+	
+	private static String username;
+	
+	static void buildGUI() {
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(500,500);
 		frame.setResizable(false);
-		
 		
 		tField = new JTextField();
 		// arguments:    x    y  width height
@@ -53,30 +58,38 @@ public class Client {
 		frame.add(tField);
 		frame.add(panel); 
 		frame.setVisible(true);
-		
 	}
 
 	public static void main(String[] args) throws IOException {
-		String username = JOptionPane.showInputDialog("Enter a Username:");
-		//clr = getRandomColor();
-		clientGUI();
+		colors =new ArrayList<>();
+		colors.add(Color.RED);
+		colors.add(Color.BLUE);
+		colors.add(Color.GREEN);
+		colors.add(Color.MAGENTA);
+		colors.add(Color.GRAY);
+		colors.add(Color.BLACK);
+		colors.add(Color.ORANGE);
+		
+		username = JOptionPane.showInputDialog("Enter a Username:");
+		buildGUI();
 		
 		Socket s = new Socket(SERVER_IP, SERVER_PORT);
 		MessageHandler serverConn = new MessageHandler(s, tPane);
 		BufferedReader kb = new BufferedReader(new InputStreamReader(System.in));
 		PrintWriter out = new PrintWriter(s.getOutputStream(), true);
-
-
-		out.println(username + " entered the chatroom!");
+		String colorID = generateColorID();
+		
+		out.println(colorID + " " +username + " entered the chatroom!");
 		
 		new Thread(serverConn).start(); // start message handler on client side
 		
 		while (true) {
 			String str = kb.readLine();
+//			String str = kb.readLine();
 			if(str.equals(""))
 				continue;
 			else if (!str.equals("/quit"))
-				out.println(username + ": "+ str); // send to server
+				out.println(colorID + " " +username + ": "+ str); // send to server
 			else {
 				out.println(username +" left the chatroom.");
 				out.println(str);
@@ -87,4 +100,14 @@ public class Client {
 		s.close();
 		System.exit(0);
 	}
+	
+	private static String generateColorID() {
+		Random rnd = new Random();
+		int num = rnd.nextInt(colors.size());
+		int r =colors.get(num).getRed();
+		int g =colors.get(num).getGreen();
+		int b = colors.get(num).getBlue();
+		return Integer.toString(r) + " "  + Integer.toString(g)+ " " +  Integer.toString(b);
+	}
+	
 }

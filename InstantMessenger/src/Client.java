@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Random;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -35,19 +36,28 @@ public class Client {
 	static void buildGUI() {
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(500,500);
+		frame.setSize(500,530);
 		frame.setResizable(false);
+		frame.setLayout(new FlowLayout());
+		
+		JPanel inputPanel = new JPanel();
+		inputPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
 		
 		tField = new JTextField();
-		// arguments:    x    y  width height
-		tField.setBounds(10, 425 , 470, 35);
+		tField.setPreferredSize(new Dimension(398,35));
+		
+		JButton button = new JButton("SEND");
+		button.setPreferredSize(new Dimension(75,35));
+		
+		inputPanel.add(tField);
+		inputPanel.add(button);
 		
 		panel = new JPanel();
 		panel.setLayout(new FlowLayout(FlowLayout.LEADING));
 		
 		tPane = new JTextPane();
 		tPane.setEditable(false);
-		tPane.setPreferredSize(new Dimension(460,415));
+		tPane.setPreferredSize(new Dimension(478,415));
 		
 		JScrollPane scrollPane = new JScrollPane( tPane );
 		scrollPane.setViewportView(tPane);
@@ -55,9 +65,13 @@ public class Client {
 		scrollPane.setPreferredSize(tPane.getPreferredSize());   
 		panel.add(scrollPane, BorderLayout.PAGE_START);
 		
-		frame.add(tField);
+		
 		frame.add(panel); 
+		frame.add(inputPanel);
+//		frame.add(tField);
+//		frame.add(button, BorderLayout.SOUTH);
 		frame.setVisible(true);
+		
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -79,7 +93,7 @@ public class Client {
 		PrintWriter out = new PrintWriter(s.getOutputStream(), true);
 		String colorID = generateColorID();
 		
-		out.println(colorID + " " +username + " entered the chatroom!");
+		out.println(username + " entered the chatroom!");
 		
 		new Thread(serverConn).start(); // start message handler on client side
 		

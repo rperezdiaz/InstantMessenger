@@ -19,6 +19,7 @@ public class MessageHandler implements Runnable {
 	private BufferedReader in;
 	private JTextPane t;
 	private static Style style;
+	
 	MessageHandler(Socket s, JTextPane t) throws IOException {
 		server = s;
 		this.t = t;
@@ -29,23 +30,35 @@ public class MessageHandler implements Runnable {
 
 		try {
 			String serverResponse;
+			style = t.addStyle("myStyle", null);
+			StyleConstants.setBold(style, true);
 			while (!server.isClosed()) {
 				serverResponse = in.readLine(); // receive message from server
-//				if (serverResponse == "null")
-//					break;
-				
-				//Process Server Response
-				int i = ordinalIndexOf(serverResponse," ", 3);
-				String RGB = (serverResponse.substring(0, i+1));
-				serverResponse = serverResponse.substring(i);
-				
-				//Process RGB String to get Assigned Color
-				Color c = processRGBString(RGB);
-				style = t.addStyle("color", null);
-				StyleConstants.setForeground(style, c);
+				if (serverResponse == "null")
+					break;
+					
+				//process active user data....
+				String username;
+				if (serverResponse.contains(":")) {
+					
+					//Process Server Response
+					int i = ordinalIndexOf(serverResponse," ", 3);
+					String RGB = (serverResponse.substring(0, i+1));
+					serverResponse = serverResponse.substring(i);
+					
+					//Process RGB String to get Assigned Color
+					Color c = processRGBString(RGB);
+					StyleConstants.setForeground(style, c);
+					
+					//extract user name from message string
+					i =serverResponse.indexOf(":");
+					username = serverResponse.substring(0,i);
+					serverResponse = serverResponse.substring(i);
+					t.getStyledDocument().insertString(t.getStyledDocument().getLength(), username, style);
+				}
 				
 				//Write message to document
-				t.getStyledDocument().insertString(t.getStyledDocument().getLength(), serverResponse +"\n", style);
+				t.getStyledDocument().insertString(t.getStyledDocument().getLength(), serverResponse +"\n", null);
 				//position textArea to the bottom of the screen
 				t.setCaretPosition(t.getDocument().getLength()); 
 			}

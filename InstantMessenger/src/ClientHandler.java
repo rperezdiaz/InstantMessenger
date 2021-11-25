@@ -22,6 +22,7 @@ public class ClientHandler implements Runnable{
 	@Override
 	public void run() {
 		try {
+			
 			while (true) {
 				String request = in.readLine();
 				if (request.equals("/quit"))

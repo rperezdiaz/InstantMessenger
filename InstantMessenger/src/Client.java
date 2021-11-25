@@ -84,6 +84,12 @@ public class Client {
 		colors.add(Color.ORANGE);
 
 		username = JOptionPane.showInputDialog("Enter a Username:");
+		while (username == null || username.equals("") || username.contains(" ") || username.contains(":")) {
+			username = JOptionPane.showInputDialog("Please enter a valid Username.\n"
+					+ "(Your name cannot contain any spaces or colons (:))");
+			if (username == null)
+				System.exit(0);
+		}
 		buildGUI();
 
 		Socket s = new Socket(SERVER_IP, SERVER_PORT);

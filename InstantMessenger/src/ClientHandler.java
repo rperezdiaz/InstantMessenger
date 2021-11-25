@@ -5,14 +5,14 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.io.*;
 
-public class ClientHandler implements Runnable{
-	
+public class ClientHandler implements Runnable {
+
 	private Socket client;
 	private BufferedReader in;
 	private PrintWriter out;
 	private ArrayList<ClientHandler> clients;
-	
-	ClientHandler (Socket clientSocket, ArrayList<ClientHandler> clients) throws IOException{
+
+	ClientHandler(Socket clientSocket, ArrayList<ClientHandler> clients) throws IOException {
 		this.clients = clients;
 		client = clientSocket;
 		in = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -22,7 +22,7 @@ public class ClientHandler implements Runnable{
 	@Override
 	public void run() {
 		try {
-			
+
 			while (true) {
 				String request = in.readLine();
 				if (request.equals("/quit"))
@@ -32,11 +32,9 @@ public class ClientHandler implements Runnable{
 				}
 
 			}
-		}
-		catch (IOException e){
+		} catch (IOException e) {
 			System.err.println("Error in ClientHandler.java: Someone disconected abruptly.");
-		}
-		finally {
+		} finally {
 			out.close();
 			try {
 				in.close();
@@ -47,10 +45,10 @@ public class ClientHandler implements Runnable{
 	}
 
 	private void outToAll(String msg) {
-		for(ClientHandler c : clients) {
+		for (ClientHandler c : clients) {
 			c.out.println(msg);
 		}
-		
+
 	}
-		
+
 }

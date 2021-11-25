@@ -19,12 +19,13 @@ public class MessageHandler implements Runnable {
 	private BufferedReader in;
 	private JTextPane t;
 	private static Style style;
-	
+
 	MessageHandler(Socket s, JTextPane t) throws IOException {
 		server = s;
 		this.t = t;
 		in = new BufferedReader(new InputStreamReader(server.getInputStream()));
 	}
+
 	@Override
 	public void run() {
 
@@ -36,31 +37,31 @@ public class MessageHandler implements Runnable {
 				serverResponse = in.readLine(); // receive message from server
 				if (serverResponse == "null")
 					break;
-					
-				//process active user data....
+
+				// process active user data....
 				String username;
 				if (serverResponse.contains(":")) {
-					
-					//Process Server Response
-					int i = ordinalIndexOf(serverResponse," ", 3);
-					String RGB = (serverResponse.substring(0, i+1));
+
+					// Process Server Response
+					int i = ordinalIndexOf(serverResponse, " ", 3);
+					String RGB = (serverResponse.substring(0, i + 1));
 					serverResponse = serverResponse.substring(i);
-					
-					//Process RGB String to get Assigned Color
+
+					// Process RGB String to get Assigned Color
 					Color c = processRGBString(RGB);
 					StyleConstants.setForeground(style, c);
-					
-					//extract user name from message string
-					i =serverResponse.indexOf(":");
-					username = serverResponse.substring(0,i);
+
+					// extract user name from message string
+					i = serverResponse.indexOf(":");
+					username = serverResponse.substring(0, i);
 					serverResponse = serverResponse.substring(i);
 					t.getStyledDocument().insertString(t.getStyledDocument().getLength(), username, style);
 				}
-				
-				//Write message to document
-				t.getStyledDocument().insertString(t.getStyledDocument().getLength(), serverResponse +"\n", null);
-				//position textArea to the bottom of the screen
-				t.setCaretPosition(t.getDocument().getLength()); 
+
+				// Write message to document
+				t.getStyledDocument().insertString(t.getStyledDocument().getLength(), serverResponse + "\n", null);
+				// position textArea to the bottom of the screen
+				t.setCaretPosition(t.getDocument().getLength());
 			}
 		} catch (IOException e) {
 			System.err.println("Error in MessageHandler.java");
@@ -68,7 +69,7 @@ public class MessageHandler implements Runnable {
 		} catch (BadLocationException e) {
 			System.err.println("Error in MessageHandler.java");
 			e.printStackTrace();
-		}finally {
+		} finally {
 			try {
 				in.close();
 			} catch (IOException e) {
@@ -78,20 +79,20 @@ public class MessageHandler implements Runnable {
 			System.out.println("Client closed.");
 		}
 	}
-	
+
 	private static Color processRGBString(String str) {
-		String [] rgb = str.split(" ");
+		String[] rgb = str.split(" ");
 		int r = Integer.parseInt(rgb[0]);
 		int g = Integer.parseInt(rgb[1]);
 		int b = Integer.parseInt(rgb[2]);
-		return new Color(r,g,b);
+		return new Color(r, g, b);
 	}
 
 	private static int ordinalIndexOf(String str, String substr, int n) {
-	    int pos = str.indexOf(substr);
-	    while (--n > 0 && pos != -1)
-	        pos = str.indexOf(substr, pos + 1);
-	    return pos;
+		int pos = str.indexOf(substr);
+		while (--n > 0 && pos != -1)
+			pos = str.indexOf(substr, pos + 1);
+		return pos;
 	}
 
 }

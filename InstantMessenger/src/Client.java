@@ -2,78 +2,48 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.io.BufferedReader;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.io.PrintWriter;
+
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
-//import javax.swing.text.StyledDocument;
 
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 
-public class Client {
 
-	private static final String SERVER_IP = "127.0.0.1";
-	private static final int SERVER_PORT = 9090;
+public class Client extends JFrame implements ActionListener{
 
-	private static JPanel panel;
+	// JFrame objects
+	static final String SERVER_IP = "127.0.0.1";
+	static final int SERVER_PORT = 9090;
+
+	private JPanel inputPanel;
+	private JPanel panel;
 	private static JTextPane tPane;
-	private static JTextField tField;
+	private JTextField tField;
+	private JButton button;
+
+
+	private Socket server;
+	private MessageHandler serverConn;
+	private PrintWriter out;
 
 	private static ArrayList<Color> colors;
+	private String colorID;
+	private String username;
 
-	private static String username;
+	public Client(String username) throws UnknownHostException, IOException {
 
-	static void buildGUI() {
-		JFrame frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(500, 530);
-		frame.setResizable(false);
-		frame.setLayout(new FlowLayout());
-
-		JPanel inputPanel = new JPanel();
-		inputPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
-
-		tField = new JTextField();
-		tField.setPreferredSize(new Dimension(398, 35));
-
-		JButton button = new JButton("SEND");
-		button.setPreferredSize(new Dimension(75, 35));
-
-		inputPanel.add(tField);
-		inputPanel.add(button);
-
-		panel = new JPanel();
-		panel.setLayout(new FlowLayout(FlowLayout.LEADING));
-
-		tPane = new JTextPane();
-		tPane.setEditable(false);
-		tPane.setPreferredSize(new Dimension(478, 415));
-
-		JScrollPane scrollPane = new JScrollPane(tPane);
-		scrollPane.setViewportView(tPane);
-		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		scrollPane.setPreferredSize(tPane.getPreferredSize());
-		panel.add(scrollPane, BorderLayout.PAGE_START);
-
-		frame.add(panel);
-		frame.add(inputPanel);
-//		frame.add(tField);
-//		frame.add(button, BorderLayout.SOUTH);
-		frame.setVisible(true);
-
-	}
-
-	public static void main(String[] args) throws IOException {
 		colors = new ArrayList<>();
 		colors.add(Color.RED);
 		colors.add(Color.BLUE);
@@ -83,41 +53,79 @@ public class Client {
 		colors.add(Color.BLACK);
 		colors.add(Color.ORANGE);
 
-		username = JOptionPane.showInputDialog("Enter a Username:");
-		while (username == null || username.equals("") || username.contains(" ") || username.contains(":")) {
-			username = JOptionPane.showInputDialog("Please enter a valid Username.\n"
-					+ "(Your name cannot contain any spaces or colons (:))");
-			if (username == null)
-				System.exit(0);
-		}
-		buildGUI();
+		// Main Frame
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setSize(500, 530);
+		this.setResizable(false);
+		this.setLayout(new FlowLayout());
 
-		Socket s = new Socket(SERVER_IP, SERVER_PORT);
-		MessageHandler serverConn = new MessageHandler(s, tPane);
-		BufferedReader kb = new BufferedReader(new InputStreamReader(System.in));
-		PrintWriter out = new PrintWriter(s.getOutputStream(), true);
-		String colorID = generateColorID();
+		// Input Panel Frame
+		inputPanel = new JPanel();
+		inputPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
 
-		out.println(username + " entered the chatroom!");
+		// Input bar
+		tField = new JTextField();
+		tField.setPreferredSize(new Dimension(398, 35));
+		tField.setText("Type here...");
 
-		new Thread(serverConn).start(); // start message handler on client side
+		// Button send
+		button = new JButton("SEND");
+		button.setPreferredSize(new Dimension(75, 35));
 
-		while (true) {
-			String str = kb.readLine();
-//			String str = kb.readLine();
-			if (str.equals(""))
-				continue;
-			else if (!str.equals("/quit"))
-				out.println(colorID + " " + username + ": " + str); // send to server
-			else {
-				out.println(username + " left the chatroom.");
-				out.println(str);
-				break; // exit loop
-			}
-		}
+		button.addActionListener(this);
 
-		s.close();
-		System.exit(0);
+		// Output Panel and ScrollPane
+		panel = new JPanel();
+		panel.setLayout(new FlowLayout(FlowLayout.LEADING));
+
+		// Output Panel
+		tPane = new JTextPane();
+		tPane.setEditable(false);
+		tPane.setPreferredSize(new Dimension(478, 415));
+
+		// ScrollPane 
+		JScrollPane scrollPane = new JScrollPane(tPane);
+		scrollPane.setViewportView(tPane);
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollPane.setPreferredSize(tPane.getPreferredSize());
+
+		// Packing on main frame 
+		inputPanel.add(tField);
+		inputPanel.add(button);
+		panel.add(scrollPane, BorderLayout.PAGE_START);
+		this.add(panel);
+		this.add(inputPanel);
+		this.setVisible(true);
+
+		this.setSocket(SERVER_IP, SERVER_PORT);
+		this.setMessageHandler();
+		this.setPrintWriter();
+		this.colorID = generateColorID();
+
+		this.username = username;
+		out.println(this.username + " entered the chatroom!");
+		new Thread(serverConn).start();
+	}
+
+	// Set the Socket
+	public void setSocket (String IP, int port) throws UnknownHostException, IOException {
+		this.server = new Socket(IP, port);
+	}
+
+	// Returns Socket object.
+	public Socket getSocket() {
+		return this.server;
+	}
+
+	// Setter function
+	public void setMessageHandler() throws IOException {
+		this.serverConn = new MessageHandler(this.getSocket(), this.tPane);
+
+	}
+
+	// Setter function
+	public void setPrintWriter() throws IOException {
+		this.out = new PrintWriter(getSocket().getOutputStream(), true);
 	}
 
 	private static String generateColorID() {
@@ -129,4 +137,21 @@ public class Client {
 		return Integer.toString(r) + " " + Integer.toString(g) + " " + Integer.toString(b);
 	}
 
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource() == this.button) {
+			String str = this.tField.getText();
+			if (!str.equals("/quit")) {
+				
+				out.println(this.colorID + " " + this.username + ": " + str); // send to server
+				
+			} else {
+				out.println(username + " left the chatroom.");
+				out.println(str);
+			}
+
+		}
+	}
 }
+
+

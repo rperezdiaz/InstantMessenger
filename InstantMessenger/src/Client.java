@@ -140,11 +140,9 @@ public class Client extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == this.button) {
-			String str = this.tField.getText();
+			String str = this.tField.getText();this.tField.setText("");
 			if (!str.equals("/quit")) {
-				
 				out.println(this.colorID + " " + this.username + ": " + str); // send to server
-				
 			} else {
 				out.println(username + " left the chatroom.");
 				out.println(str);

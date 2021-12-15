@@ -1,4 +1,6 @@
+package client;
 import javax.swing.JOptionPane;
+
 import java.io.IOException;
 import java.net.UnknownHostException;
 

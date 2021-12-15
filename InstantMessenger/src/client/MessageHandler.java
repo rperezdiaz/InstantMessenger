@@ -1,3 +1,4 @@
+package client;
 /*
  * this class manages incoming messages from the server
  */

@@ -21,15 +21,16 @@ import javax.swing.JTextPane;
 
 
 
+@SuppressWarnings("serial")
 public class Client extends JFrame implements ActionListener{
 
 	// JFrame objects
-	static final String SERVER_IP = "127.0.0.1";
-	static final int SERVER_PORT = 9090;
+	static final String SERVER_IP = ADDRESS.IP_ADDRESS;
+	static final int SERVER_PORT = ADDRESS.SERVER_PORT;
 
 	private JPanel inputPanel;
 	private JPanel panel;
-	private static JTextPane tPane;
+	private JTextPane tPane;
 	private JTextField tField;
 	private JButton button;
 
@@ -64,9 +65,9 @@ public class Client extends JFrame implements ActionListener{
 		inputPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
 
 		// Input bar
-		tField = new JTextField();
+		tField = new JTextField("Type here...");
 		tField.setPreferredSize(new Dimension(398, 35));
-		tField.setText("Type here...");
+		//tField.setText("Type here...");
 
 		// Button send
 		button = new JButton("SEND");

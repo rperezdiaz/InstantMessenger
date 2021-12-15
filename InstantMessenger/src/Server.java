@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 
 public class Server {
 
-	private static final int PORT = 9090;
+	private static final int PORT = ADDRESS.SERVER_PORT;
 	private static ArrayList<ClientHandler> clients;
 	private static ExecutorService threadPool = Executors.newFixedThreadPool(4);
 

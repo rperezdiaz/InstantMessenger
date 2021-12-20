@@ -16,11 +16,12 @@ public class Server {
 	private static ExecutorService threadPool = Executors.newFixedThreadPool(4);
 
 	public static void main(String[] args) throws IOException {
+		@SuppressWarnings("resource")
 		ServerSocket listener = new ServerSocket(PORT);
 		clients = new ArrayList<>();
 
 		while (true) {
-			Socket clientConn = listener.accept(); // wait for connection to port 9090
+			Socket clientConn = listener.accept(); // wait for connection to port 2021
 			System.out.println("[SERVER] A client connected to server from " + clientConn.getRemoteSocketAddress());
 
 			ClientHandler clientThread = new ClientHandler(clientConn, clients); // create new ClientHandler

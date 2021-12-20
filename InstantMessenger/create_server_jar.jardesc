@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<jardesc>
+    <jar path="C:/Users/reyfp/Desktop/WORKSPACE/Applications/Server-InstantMessenger.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/InstantMessenger/create_server_jar.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="false" saveDescription="true" storeRefactorings="true" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" mainClassHandleIdentifier="=InstantMessenger/src&lt;server{Server.java[Server" manifestLocation="/InstantMessenger/Server-MANIFEST.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="true" usesManifest="true">
+        <sealing sealJar="true">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
+        <javaElement handleIdentifier="=InstantMessenger/src&lt;server"/>
+        <javaElement handleIdentifier="=InstantMessenger/src&lt;connection"/>
+    </selectedElements>
+</jardesc>

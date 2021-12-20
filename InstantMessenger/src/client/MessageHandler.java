@@ -18,12 +18,12 @@ public class MessageHandler implements Runnable {
 
 	private Socket server;
 	private BufferedReader in;
-	private JTextPane t;
+	private JTextPane textPane;
 	private static Style style;
 
 	MessageHandler(Socket s, JTextPane t) throws IOException {
 		server = s;
-		this.t = t;
+		this.textPane = t;
 		in = new BufferedReader(new InputStreamReader(server.getInputStream()));
 	}
 
@@ -32,7 +32,7 @@ public class MessageHandler implements Runnable {
 
 		try {
 			String serverResponse;
-			style = t.addStyle("myStyle", null);
+			style = textPane.addStyle("myStyle", null);
 			StyleConstants.setBold(style, true);
 			while (!server.isClosed()) {
 				serverResponse = in.readLine(); // receive message from server
@@ -56,13 +56,13 @@ public class MessageHandler implements Runnable {
 					i = serverResponse.indexOf(":");
 					username = serverResponse.substring(0, i);
 					serverResponse = serverResponse.substring(i);
-					t.getStyledDocument().insertString(t.getStyledDocument().getLength(), username, style);
+					textPane.getStyledDocument().insertString(textPane.getStyledDocument().getLength(), username, style);
 				}
 
 				// Write message to document
-				t.getStyledDocument().insertString(t.getStyledDocument().getLength(), serverResponse + "\n", null);
+				textPane.getStyledDocument().insertString(textPane.getStyledDocument().getLength(), serverResponse + "\n", null);
 				// position textArea to the bottom of the screen
-				t.setCaretPosition(t.getDocument().getLength());
+				textPane.setCaretPosition(textPane.getDocument().getLength());
 			}
 		} catch (IOException e) {
 			System.err.println("Error in MessageHandler.java");

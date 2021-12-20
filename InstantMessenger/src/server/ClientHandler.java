@@ -1,5 +1,6 @@
 package server;
 //Handles Client Connections
+
 //Each client is handled by its own server
 
 import java.net.Socket;
@@ -12,6 +13,7 @@ public class ClientHandler implements Runnable {
 	private BufferedReader in;
 	private PrintWriter out;
 	private ArrayList<ClientHandler> clients;
+	private String request;
 
 	ClientHandler(Socket clientSocket, ArrayList<ClientHandler> clients) throws IOException {
 		this.clients = clients;
@@ -25,7 +27,7 @@ public class ClientHandler implements Runnable {
 		try {
 
 			while (true) {
-				String request = in.readLine();
+				request = in.readLine();
 				if (request.equals("/quit"))
 					break;
 				else {
@@ -34,8 +36,11 @@ public class ClientHandler implements Runnable {
 
 			}
 		} catch (IOException e) {
-			System.err.println("Error in ClientHandler.java: Someone disconected abruptly.");
+//			System.err.println("Error in ClientHandler.java: Someone disconected abruptly.");
+//			e.printStackTrace();
 		} finally {
+			clients.remove(this);
+			System.out.println("[SERVER] " + client.getRemoteSocketAddress() + " Disconected");
 			out.close();
 			try {
 				in.close();

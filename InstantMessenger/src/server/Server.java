@@ -1,4 +1,5 @@
 package server;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -19,10 +20,8 @@ public class Server {
 		clients = new ArrayList<>();
 
 		while (true) {
-			System.out.println("[SERVER] Waiting for client connection...");
-
 			Socket clientConn = listener.accept(); // wait for connection to port 9090
-			System.out.println("[SERVER] A client connected to server.");
+			System.out.println("[SERVER] A client connected to server from " + clientConn.getRemoteSocketAddress());
 
 			ClientHandler clientThread = new ClientHandler(clientConn, clients); // create new ClientHandler
 			clients.add(clientThread); // adds clients to
